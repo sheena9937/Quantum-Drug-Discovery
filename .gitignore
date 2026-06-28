@@ -1,0 +1,16 @@
+# IntelliJ IDEA
+.idea/
+
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Generated results (optional)
+results/

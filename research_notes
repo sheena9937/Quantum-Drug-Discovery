@@ -1,0 +1,19 @@
+# Phase 2 - Dataset Exploration
+
+Dataset : BBBP
+
+Total molecules : 2039
+
+Features :
+- SMILES
+- Label
+
+Observations:
+
+- No missing values.
+- No duplicate molecules.
+- Dataset is imbalanced.
+- Around 76.5% molecules can cross BBB.
+- Around 23.5% molecules cannot cross BBB.
+- Average SMILES length is approximately 52 characters.
+
