@@ -29,6 +29,7 @@ if __name__ == "__main__":
         print("\nFirst 5 rows:\n")
         print("\nDataset Information")
         print("-------------------")
+
         print(df.info())
 
         print("\nFirst 5 Rows")
