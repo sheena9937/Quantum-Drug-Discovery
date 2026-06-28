@@ -27,4 +27,14 @@ if __name__ == "__main__":
 
     if df is not None:
         print("\nFirst 5 rows:\n")
+        print("\nDataset Information")
+        print("-------------------")
+        print(df.info())
+
+        print("\nFirst 5 Rows")
+        print("------------")
         print(df.head())
+
+        print("\nColumn Names")
+        print("------------")
+        print(df.columns.tolist())
