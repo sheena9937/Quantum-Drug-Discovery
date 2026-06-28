@@ -33,6 +33,7 @@ def class_distribution(df):
     plt.ylabel("Number of Molecules")
 
     plt.tight_layout()
+    plt.savefig("../../figures/class_distribution.png", dpi=300)
     plt.show()
 
 
