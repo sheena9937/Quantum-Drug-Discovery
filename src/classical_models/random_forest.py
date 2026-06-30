@@ -1,34 +1,25 @@
+import pandas as pd
 import numpy as np
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report
-from sklearn.metrics import roc_auc_score
-import matplotlib.pyplot as plt
+import os
 import joblib
-from src.utils.model_comparison import plot_accuracy, plot_auc
 
+from sklearn.ensemble import RandomForestClassifier
 
-def load_data():
+from src.utils.data_utils import load_data, split_dataset
 
-    X = np.load("../../data/processed/fingerprints.npy")
-    y = np.load("../../data/processed/labels.npy")
+from src.utils.evaluation import (
+    calculate_accuracy,
+    print_confusion_matrix,
+    print_classification_report,
+    calculate_auc
+)
 
-    return X, y
-
-
-def split_dataset(X, y):
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X,
-        y,
-        test_size=0.2,
-        random_state=42,
-        stratify=y
-    )
-
-    return X_train, X_test, y_train, y_test
+from src.utils.visualization import (
+    plot_feature_importance,
+    plot_top_features,
+    plot_accuracy,
+    plot_auc
+)
 
 def train_model(X_train, y_train):
 
@@ -47,47 +38,6 @@ def get_feature_importance(model):
 
     return importance
 
-def plot_feature_importance(importance):
-
-    plt.figure(figsize=(12,6))
-
-    plt.bar(range(len(importance)), importance)
-
-    plt.title("Feature Importance")
-
-    plt.xlabel("Fingerprint Bit")
-
-    plt.ylabel("Importance")
-
-    plt.tight_layout()
-
-    plt.savefig("../../figures/random_forest_feature_importance.png")
-
-    plt.show()
-
-def plot_top_features(importance):
-
-    top_n = 20
-
-    indices = np.argsort(importance)[-top_n:]
-
-    plt.figure(figsize=(10, 6))
-
-    plt.barh(range(top_n), importance[indices])
-
-    plt.yticks(range(top_n), indices)
-
-    plt.xlabel("Feature Importance")
-
-    plt.ylabel("Fingerprint Bit")
-
-    plt.title("Top 20 Most Important Fingerprint Bits")
-
-    plt.tight_layout()
-
-    plt.savefig("../../figures/top20_feature_importance.png")
-
-    plt.show()
 
 def save_model(model):
 
@@ -103,37 +53,6 @@ def make_predictions(model, X_test):
 
     return predictions
 
-def evaluate_model(y_test, predictions):
-
-    accuracy = accuracy_score(y_test, predictions)
-
-    return accuracy
-
-def print_confusion_matrix(y_test, predictions):
-
-    matrix = confusion_matrix(y_test, predictions)
-
-    print("\nConfusion Matrix:")
-
-    print(matrix)
-
-def print_classification_report(y_test, predictions):
-
-    report = classification_report(y_test, predictions)
-
-    print("\nClassification Report:")
-
-    print(report)
-
-def calculate_auc(model, X_test, y_test):
-
-    probabilities = model.predict_proba(X_test)[:, 1]
-
-    auc = roc_auc_score(y_test, probabilities)
-
-    return auc
-import pandas as pd
-import os
 
 def save_model_results():
 
@@ -171,35 +90,38 @@ def main():
     X_train, X_test, y_train, y_test = split_dataset(X, y)
 
     model = train_model(X_train, y_train)
-    save_model(model)
-    importance = get_feature_importance(model)
-    plot_feature_importance(importance)
-    plot_top_features(importance)
+
     predictions = make_predictions(model, X_test)
-    accuracy = evaluate_model(y_test, predictions)
+
+    accuracy = calculate_accuracy(y_test, predictions)
+
     auc = calculate_auc(model, X_test, y_test)
 
-    print("Random Forest model trained successfully!")
+    importance = get_feature_importance(model)
 
-    print()
+    plot_feature_importance(importance)
 
-    print("Training Samples:", len(X_train))
+    plot_top_features(importance)
 
-    print("Testing Samples:", len(X_test))
-    print("\nFirst 10 Predictions:")
-    print(f"\nAccuracy: {accuracy:.4f}")
-    print_confusion_matrix(y_test, predictions)
-    print_classification_report(y_test, predictions)
-    print(f"ROC-AUC Score: {auc:.4f}")
-    print("\nFirst 10 Feature Importance Values:")
+    save_model(model)
 
-    print(importance[:10])
     save_model_results()
+
     comparison_file = "../../results/comparisons/model_comparison.csv"
 
     plot_accuracy(comparison_file)
 
     plot_auc(comparison_file)
+
+    print("\nRandom Forest Model Trained Successfully!")
+
+    print(f"\nAccuracy: {accuracy:.4f}")
+
+    print_confusion_matrix(y_test, predictions)
+
+    print_classification_report(y_test, predictions)
+
+    print(f"ROC-AUC Score: {auc:.4f}")
 
 
 
