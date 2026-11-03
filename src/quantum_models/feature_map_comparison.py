@@ -253,7 +253,7 @@ def main():
             "| ROC-AUC:", round(result["ROC-AUC"], 4)
         )
 
-    print("\nComparison saved to:", csv_path)
+    print("\n Comparison saved to:", csv_path)
 
 
 if __name__ == "__main__":
