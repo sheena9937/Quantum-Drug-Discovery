@@ -1447,6 +1447,154 @@ The experiment investigates whether balancing the VQC training data improves min
 - results/comparisons/vqc_balanced_loss_history.npy
 - results/comparisons/vqc_balanced_metrics.npz
 
+## MODULE 11.5: VQC CLASS IMBALANCE HANDLING
+
+**Status:** Completed
+
+### Objective
+Investigate whether balancing the VQC training data improves minority-class classification.
+
+### Dataset and Experimental Setup
+- Dataset: BBBP
+- Original training subset: 120 samples
+- Original training distribution: 28 class-0, 92 class-1
+- Balanced training subset: 184 samples
+- Balanced distribution: 92 class-0, 92 class-1
+- Testing samples: 100
+- Test distribution: 24 class-0, 76 class-1
+
+### Method
+Random oversampling was applied to the minority class in the training subset. The test dataset was not oversampled or modified.
+
+### Quantum Model
+- Feature map: Z Feature Map
+- Feature map repetitions: 1
+- Ansatz: Real Amplitudes
+- Ansatz repetitions: 1
+- Qubits: 4
+- Loss: Cross Entropy
+- Optimizer: COBYLA
+- Maximum iterations: 20
+- Random seed: 42
+
+### Evaluation Results
+
+| Metric | Result |
+|---|---:|
+| Accuracy | 0.6100 |
+| Balanced Accuracy | 0.4298 |
+| ROC-AUC | 0.4161 |
+
+### Confusion Matrix
+
+[[2, 22],
+ [17, 59]]
+
+### Classification Results
+
+**Class 0**
+- Precision: 0.11
+- Recall: 0.08
+- F1-score: 0.09
+- Support: 24
+
+**Class 1**
+- Precision: 0.73
+- Recall: 0.78
+- F1-score: 0.75
+- Support: 76
+
+### Comparison with Original VQC
+
+| Metric | Original VQC | Balanced VQC |
+|---|---:|---:|
+| Accuracy | 0.6500 | 0.6100 |
+| Balanced Accuracy | 0.4419 | 0.4298 |
+| ROC-AUC | 0.6754 | 0.4161 |
+| Class 0 Recall | 0.04 | 0.08 |
+| Class 1 Recall | 0.84 | 0.78 |
+
+### Observations
+1. Random oversampling slightly improved class-0 recall from 0.04 to 0.08.
+2. Overall accuracy decreased from 0.65 to 0.61.
+3. Balanced accuracy decreased from 0.4419 to 0.4298.
+4. ROC-AUC decreased from 0.6754 to 0.4161.
+5. The model continued to struggle with class-0 classification.
+6. Oversampling alone did not produce a meaningful improvement in VQC performance.
+
+### Conclusion
+The balanced VQC experiment was successfully implemented. However, random oversampling did not improve overall classification performance. Both the original and balanced VQC configurations struggled to distinguish minority-class molecules.
+
+The results show that class balancing alone is insufficient for improving the current VQC configuration.
+
+### Saved Files
+- results/comparisons/vqc_balanced_predictions.npy
+- results/comparisons/vqc_balanced_probabilities.npy
+- results/comparisons/vqc_balanced_weights.npy
+- results/comparisons/vqc_balanced_loss_history.npy
+- results/comparisons/vqc_balanced_metrics.npz
+
+### Next Step
+Perform a final comparison of classical and quantum models using consistent training and testing subsets.
+
+## MODULE 11.6: FINAL CLASSICAL VS QUANTUM MODEL COMPARISON
+
+**Status:** Completed
+
+### Objective
+Compare classical machine learning models and quantum machine learning models using a consistent pilot dataset split.
+
+### Dataset
+BBBP (Blood-Brain Barrier Penetration)
+
+### Experimental Setup
+- Training samples: 120
+- Testing samples: 100
+- Random state: 42
+- Evaluation metrics: Accuracy, Balanced Accuracy, ROC-AUC
+
+### Classical Models
+
+| Model | Accuracy | Balanced Accuracy | ROC-AUC |
+|---|---:|---:|---:|
+| Logistic Regression | 0.80 | 0.6261 | 0.7374 |
+| Random Forest | 0.81 | 0.6327 | 0.7166 |
+| SVM | 0.79 | 0.5768 | 0.7538 |
+
+### Quantum Models
+
+| Model | Accuracy | Balanced Accuracy | ROC-AUC |
+|---|---:|---:|---:|
+| Z Feature Map QSVC | 0.77 | 0.5779 | 0.7708 |
+| ZZ QSVC | 0.76 | 0.6140 | 0.7253 |
+| ZZ QSVC (2 Reps) | 0.72 | 0.6447 | 0.7160 |
+| Original VQC | 0.65 | 0.4419 | 0.6754 |
+| Balanced VQC | 0.61 | 0.4298 | 0.4161 |
+
+### Key Findings
+1. Random Forest achieved the highest accuracy of 0.81.
+2. Logistic Regression achieved the highest classical ROC-AUC of 0.7374.
+3. Z Feature Map QSVC achieved a ROC-AUC of 0.7708.
+4. ZZ QSVC with two repetitions achieved the highest balanced accuracy of 0.6447.
+5. VQC configurations showed weak minority-class classification performance.
+6. No single model performed best across all evaluation metrics.
+
+### Conclusion
+Classical and quantum machine learning models were evaluated using the same pilot training and testing subsets.
+
+The classical Random Forest model achieved the highest accuracy. The quantum ZZ QSVC with two repetitions achieved the highest balanced accuracy, while the Z Feature Map QSVC achieved the highest ROC-AUC across the compared models.
+
+The experiments demonstrate that quantum kernel models can provide competitive results on selected metrics in this small pilot experiment. However, these results do not establish a general quantum computational advantage.
+
+### Generated Files
+- results/comparisons/final_model_comparison.csv
+- figures/accuracy_comparison.png
+- figures/balanced_accuracy_comparison.png
+- figures/roc_auc_comparison.png
+
+### Next Step
+Prepare final project documentation, visualizations and GitHub repository.
+
 
 
 
