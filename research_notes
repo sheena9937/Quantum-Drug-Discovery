@@ -1396,6 +1396,57 @@ Further experiments involving class-imbalance handling, circuit configurations, 
 ### Next Step
 Improve VQC performance through class-imbalance handling and hyperparameter experimentation.
 
+## MODULE 11.5: VQC CLASS IMBALANCE HANDLING
+
+**Status:** In Progress
+
+### Objective
+Improve minority-class prediction in the Variational Quantum Classifier.
+
+### Method
+Random oversampling of the minority class was applied to the training subset.
+
+### Experimental Configuration
+- Original training subset: 120 samples
+- Original class distribution: 28 class-0, 92 class-1
+- Balanced training subset: 184 samples
+- Balanced distribution: 92 class-0, 92 class-1
+- Testing samples: 100
+- Test distribution: 24 class-0, 76 class-1
+- Feature map: Z Feature Map
+- Feature map repetitions: 1
+- Ansatz: Real Amplitudes
+- Ansatz repetitions: 1
+- Optimizer: COBYLA
+- Maximum iterations: 20
+- Loss function: Cross Entropy
+- Random seed: 42
+
+### Evaluation Metrics
+- Accuracy
+- Balanced Accuracy
+- ROC-AUC
+- Confusion Matrix
+- Precision
+- Recall
+- F1-score
+
+### Results
+To be updated after execution.
+
+### Observations
+To be updated after execution.
+
+### Conclusion
+The experiment investigates whether balancing the VQC training data improves minority-class prediction without changing the test dataset.
+
+### Saved Files
+- results/comparisons/vqc_balanced_predictions.npy
+- results/comparisons/vqc_balanced_probabilities.npy
+- results/comparisons/vqc_balanced_weights.npy
+- results/comparisons/vqc_balanced_loss_history.npy
+- results/comparisons/vqc_balanced_metrics.npz
+
 
 
 
