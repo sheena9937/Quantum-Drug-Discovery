@@ -174,7 +174,7 @@ def main():
 
         plt.close()
 
-    print("\nComparison CSV and charts saved successfully.")
+    print("\n Comparison CSV and charts saved successfully.")
 
 
 if __name__ == "__main__":
