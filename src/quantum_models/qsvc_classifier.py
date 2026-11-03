@@ -7,7 +7,8 @@ from sklearn.metrics import (
     accuracy_score,
     confusion_matrix,
     classification_report,
-    roc_auc_score
+    roc_auc_score,
+    balanced_accuracy_score
 )
 
 from qiskit.circuit.library import zz_feature_map
@@ -26,10 +27,7 @@ def main():
     y_train = np.load(data_dir / "quantum_y_train.npy")
     y_test = np.load(data_dir / "quantum_y_test.npy")
 
-    print("Original training shape:", X_train.shape)
-    print("Original testing shape:", X_test.shape)
-
-    # Select a manageable stratified training subset
+    # Select the same pilot training subset
     X_train_small, _, y_train_small, _ = train_test_split(
         X_train,
         y_train,
@@ -38,7 +36,7 @@ def main():
         stratify=y_train
     )
 
-    # Select a manageable stratified test subset
+    # Select the same pilot testing subset
     X_test_small, _, y_test_small, _ = train_test_split(
         X_test,
         y_test,
@@ -47,8 +45,11 @@ def main():
         stratify=y_test
     )
 
-    print("\nPilot training samples:", len(y_train_small))
-    print("Pilot testing samples:", len(y_test_small))
+    print("Training samples:", len(y_train_small))
+    print("Testing samples:", len(y_test_small))
+
+    print("\nTraining class distribution:")
+    print(np.unique(y_train_small, return_counts=True))
 
     # Create quantum feature map
     feature_map = zz_feature_map(
@@ -57,20 +58,18 @@ def main():
         entanglement="linear"
     )
 
-    print("\nQuantum Feature Map:")
-    print(feature_map)
-
     # Create quantum kernel
     quantum_kernel = FidelityQuantumKernel(
         feature_map=feature_map
     )
 
-    # Create quantum SVM
+    # Balanced QSVC
     qsvc = QSVC(
-        quantum_kernel=quantum_kernel
+        quantum_kernel=quantum_kernel,
+        class_weight="balanced"
     )
 
-    print("\nTraining QSVC...")
+    print("\nTraining Balanced QSVC...")
 
     qsvc.fit(X_train_small, y_train_small)
 
@@ -81,39 +80,50 @@ def main():
 
     # Evaluation
     accuracy = accuracy_score(y_test_small, y_pred)
+    balanced_acc = balanced_accuracy_score(y_test_small, y_pred)
     cm = confusion_matrix(y_test_small, y_pred)
 
+    decision_scores = qsvc.decision_function(X_test_small)
+    auc = roc_auc_score(y_test_small, decision_scores)
+
     print("\nAccuracy:", accuracy)
+    print("Balanced Accuracy:", balanced_acc)
+    print("ROC-AUC:", auc)
 
     print("\nConfusion Matrix:")
     print(cm)
 
     print("\nClassification Report:")
-    print(classification_report(y_test_small, y_pred))
-
-    # ROC-AUC
-    decision_scores = qsvc.decision_function(X_test_small)
-    auc = roc_auc_score(y_test_small, decision_scores)
-
-    print("ROC-AUC:", auc)
+    print(
+        classification_report(
+            y_test_small,
+            y_pred,
+            zero_division=0
+        )
+    )
 
     # Save results
     results_dir = project_root / "results" / "comparisons"
     results_dir.mkdir(parents=True, exist_ok=True)
 
-    np.save(results_dir / "qsvc_predictions.npy", y_pred)
+    np.save(
+        results_dir / "qsvc_balanced_predictions.npy",
+        y_pred
+    )
 
     np.savez(
-        results_dir / "qsvc_metrics.npz",
+        results_dir / "qsvc_balanced_metrics.npz",
         accuracy=accuracy,
+        balanced_accuracy=balanced_acc,
         roc_auc=auc,
         confusion_matrix=cm,
         train_samples=len(y_train_small),
         test_samples=len(y_test_small)
     )
 
-    print("\nResults saved successfully.")
+    print("\nBalanced QSVC results saved successfully.")
 
 
 if __name__ == "__main__":
     main()
+
