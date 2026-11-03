@@ -1,0 +1,1401 @@
+# Phase 2 - Dataset Exploration
+
+Dataset : BBBP
+
+Total molecules : 2039
+
+Features :
+- SMILES
+- Label
+
+Observations:
+
+- No missing values.
+- No duplicate molecules.
+- Dataset is imbalanced.
+- Around 76.5% molecules can cross BBB.
+- Around 23.5% molecules cannot cross BBB.
+- Average SMILES length is approximately 52 characters.
+
+----------------------------------------------------
+WHAT I LEARNED TODAY
+----------------------------------------------------
+
+1. SMILES is a textual representation of a molecule.
+
+Example:
+CCO = Ethanol
+
+Machine learning cannot directly understand SMILES.
+
+----------------------------------------------------
+
+2. RDKit
+
+RDKit converts SMILES strings into molecule objects.
+
+Pipeline:
+
+SMILES
+   ↓
+RDKit Molecule
+   ↓
+Morgan Fingerprint
+
+----------------------------------------------------
+
+3. Morgan Fingerprints
+
+Purpose:
+Convert molecules into numerical vectors suitable for machine learning.
+
+Parameters chosen:
+
+Radius = 2
+
+Fingerprint Size = 1024 bits
+
+Output:
+
+Each molecule becomes a binary vector of length 1024.
+
+----------------------------------------------------
+
+4. Feature Matrix
+
+Generated fingerprints for all 2039 molecules.
+
+Final Shape:
+
+(2039, 1024)
+
+Rows = Molecules
+
+Columns = Molecular Features
+
+----------------------------------------------------
+
+5. Labels
+
+Saved separately as:
+
+labels.npy
+
+----------------------------------------------------
+
+FILES CREATED
+
+data/processed/
+
+- fingerprints.npy
+- labels.npy
+
+----------------------------------------------------
+
+TOOLS USED
+
+Python
+
+NumPy
+
+Pandas
+
+RDKit
+
+Git
+
+GitHub
+
+----------------------------------------------------
+
+IMPORTANT OBSERVATIONS
+
+RDKit warning:
+
+"not removing hydrogen atom without neighbors"
+
+This warning did not affect fingerprint generation.
+
+All 2039 molecules were processed successfully.
+
+----------------------------------------------------
+
+NEXT MODULE
+
+Classical Machine Learning
+
+Tasks:
+
+- Load fingerprints.npy
+- Load labels.npy
+- Train/Test Split
+- Logistic Regression
+- Accuracy
+- Precision
+- Recall
+- F1 Score
+- ROC-AUC
+
+----------------------------------------------------
+
+IDEAS FOR PAPER
+
+Research Question:
+
+Can Hybrid Quantum-Classical Machine Learning improve
+Blood-Brain Barrier permeability prediction compared
+to classical machine learning models?
+
+----------------------------------------------------
+================================================================================
+MODULE 3 : LOGISTIC REGRESSION BASELINE
+================================================================================
+
+Status : Completed
+
+Topics Learned
+
+• Train-Test Split
+• Logistic Regression
+• Model Training
+• Predictions
+• Accuracy
+• Confusion Matrix
+• Precision
+• Recall
+• F1 Score
+• ROC-AUC
+
+Results
+
+Accuracy : 0.8824
+
+ROC-AUC : 0.8951
+
+Observations
+
+• Logistic Regression performed well on the BBBP dataset.
+• Recall for BBB+ molecules was high (0.96), indicating that the model correctly identified most BBB-permeable molecules.
+• The model struggled more with BBB-impermeable molecules (Recall = 0.61).
+• ROC-AUC close to 0.90 suggests good class separation.
+
+Files Added
+
+src/classical_models/logistic_regression.py
+
+Next Module
+
+Random Forest Classifier
+================================================================================
+MODULE 4 : RANDOM FOREST CLASSIFIER
+================================================================================
+
+Status : In Progress
+
+Objective
+---------
+Implement a Random Forest Classifier for predicting Blood-Brain Barrier
+Permeability (BBBP) and compare its performance with Logistic Regression.
+
+Concepts Learned
+----------------
+• Decision Trees
+• Overfitting in Decision Trees
+• Ensemble Learning
+• Random Forest Classifier
+• Majority Voting
+• Feature Importance
+• Model Comparison
+
+Model Configuration
+-------------------
+Algorithm : Random Forest Classifier
+
+Parameters Used:
+- n_estimators = 100
+- random_state = 42
+
+Performance
+-----------
+Accuracy : 0.8946
+
+ROC-AUC Score : 0.9248
+
+Confusion Matrix
+----------------
+[[58 38]
+ [ 5 307]]
+
+Observations
+------------
+• Random Forest outperformed Logistic Regression in both Accuracy and ROC-AUC.
+• False Negatives decreased from 11 to 5, meaning fewer BBB-permeable molecules were missed.
+• False Positives increased slightly from 37 to 38, which is an acceptable trade-off.
+• Random Forest successfully captured non-linear relationships between molecular fingerprints.
+
+Feature Importance
+------------------
+Random Forest calculates an importance score for each Morgan fingerprint bit.
+
+Two visualizations were generated:
+
+1. Feature Importance (All 1024 Features)
+2. Top 20 Most Important Fingerprint Bits
+
+Observation:
+Only a small subset of fingerprint bits contributed significantly towards the prediction of BBB permeability, while most bits had very low importance.
+
+Files Added
+-----------
+src/classical_models/random_forest.py
+
+Generated Figures
+-----------------
+figures/random_forest_feature_importance.png
+
+figures/top20_feature_importance.png
+
+Results Summary
+---------------
+Random Forest outperformed Logistic Regression on the BBBP dataset.
+
+Accuracy improved from 88.24% to 89.46%.
+
+ROC-AUC improved from 0.8951 to 0.9248.
+
+False Negatives decreased from 11 to 5, reducing the number of BBB-permeable molecules that were incorrectly classified.
+
+The Feature Importance analysis showed that only a small subset of Morgan fingerprint bits contributed significantly towards prediction.
+
+Generated comparison plots and saved the trained model for future use.
+
+================================================================================
+
+MODULE 5 : PROJECT REFACTORING
+
+================================================================================
+
+Status : Completed
+
+Objective
+
+Improve the project structure by separating reusable code into utility modules.
+
+Utilities Created
+
+data_utils.py
+
+evaluation.py
+
+visualization.py
+
+Changes Made
+
+Moved data loading and dataset splitting into data_utils.py.
+
+Moved evaluation metrics into evaluation.py.
+
+Moved plotting functions into visualization.py.
+
+Refactored logistic_regression.py to use reusable utilities.
+
+Refactored random_forest.py to use reusable utilities.
+
+Reduced duplicate code across model files.
+
+Improved project modularity and maintainability.
+
+Key Learning
+
+Separating reusable logic into utility modules follows good software engineering practices. It makes the code easier to maintain, reduces duplication, and allows future machine learning models to reuse the same components.
+
+Current Project Structure
+
+src/
+
+├── preprocessing/
+
+├── classical_models/
+
+│ ├── logistic_regression.py
+
+│ └── random_forest.py
+
+└── utils/
+
+├── data_utils.py
+
+├── evaluation.py
+
+└── visualization.py
+
+Outcome
+
+The project now follows a cleaner and more professional machine learning code structure, making it easier to add SVM, XGBoost, and Quantum models in future modules.
+
+================================================================================
+MODULE 6 : SUPPORT VECTOR MACHINE (SVM)
+================================================================================
+
+Status : Completed
+
+Objective
+---------
+Implement a Support Vector Machine (SVM) classifier for predicting Blood-Brain
+Barrier Permeability (BBBP) and compare its performance with previous models.
+
+Concepts Learned
+----------------
+• Support Vector Machine (SVM)
+• Hyperplane
+• Maximum Margin Classifier
+• RBF Kernel
+• Kernel Trick
+
+Model Configuration
+-------------------
+Algorithm : Support Vector Classifier (SVC)
+
+Parameters Used:
+- kernel = rbf
+- probability = True
+- random_state = 42
+
+Performance
+-----------
+Accuracy : 0.9093
+
+ROC-AUC Score : 0.9057
+
+Confusion Matrix
+----------------
+[[61 35]
+ [ 2 310]]
+
+Observations
+------------
+• SVM achieved the highest accuracy among all implemented models.
+• False Negatives were reduced to only 2 samples.
+• The RBF kernel successfully captured non-linear relationships in molecular fingerprints.
+• Although Random Forest achieved a higher ROC-AUC score, SVM produced the best classification accuracy.
+
+Files Added
+-----------
+src/classical_models/svm_classifier.py
+
+Status
+------
+✔ Module Completed
+
+================================================================================
+MODULE 7 : HANDLING CLASS IMBALANCE
+================================================================================
+
+Status : In Progress
+
+Objective
+---------
+Investigate the effect of class imbalance on BBBP prediction models and evaluate
+techniques to improve minority class prediction.
+
+Dataset Statistics
+------------------
+BBB+ (Class 1): 1560 samples
+BBB- (Class 0): 479 samples
+
+Observation
+-----------
+The BBBP dataset is imbalanced, with approximately 76.5% of the samples belonging
+to the positive class. High accuracy alone may therefore be misleading.
+
+Techniques to be Studied
+------------------------
+• Class Weights
+• SMOTE (Synthetic Minority Over-sampling Technique)
+• Performance Comparison
+
+================================================================================
+MODULE 7.1 : BALANCED LOGISTIC REGRESSION
+================================================================================
+
+Status : Completed
+
+Objective
+---------
+Evaluate the effect of class weighting on Logistic Regression for the imbalanced
+BBBP dataset.
+
+Method
+------
+Algorithm : Logistic Regression
+
+Additional Parameter:
+- class_weight = "balanced"
+
+Performance
+-----------
+Accuracy : 0.8775
+
+ROC-AUC Score : 0.8947
+
+Confusion Matrix
+----------------
+[[66 30]
+ [20 292]]
+
+Observations
+------------
+• Class weighting improved the detection of BBB− molecules.
+• False positives decreased from 37 to 30.
+• However, false negatives increased from 11 to 20.
+• Overall accuracy decreased slightly.
+• ROC-AUC remained nearly unchanged.
+
+Conclusion
+----------
+For this dataset, using class_weight="balanced" did not improve the overall
+performance compared to the baseline Logistic Regression.
+
+================================================================================
+MODULE 7.2 : LOGISTIC REGRESSION WITH SMOTE
+================================================================================
+
+Status : Completed
+
+Objective
+---------
+Evaluate the effect of SMOTE (Synthetic Minority Over-sampling Technique) on
+Logistic Regression for the imbalanced BBBP dataset.
+
+Method
+------
+Algorithm : Logistic Regression
+
+Data Balancing Technique:
+- SMOTE
+- random_state = 42
+
+Training Data
+-------------
+Before SMOTE:
+Class 0 : 383
+Class 1 : 1248
+
+After SMOTE:
+Class 0 : 1248
+Class 1 : 1248
+
+Performance
+-----------
+Accuracy : 0.8603
+
+ROC-AUC Score : 0.8636
+
+Confusion Matrix
+----------------
+[[61 35]
+ [22 290]]
+
+Observations
+------------
+• SMOTE successfully balanced the training dataset.
+• Accuracy decreased compared to the baseline Logistic Regression.
+• ROC-AUC also decreased.
+• Synthetic samples generated by SMOTE may not preserve the underlying chemical
+  characteristics represented by binary Morgan fingerprints.
+
+Conclusion
+----------
+For the BBBP dataset represented using Morgan fingerprints, SMOTE did not
+improve Logistic Regression performance. The baseline Logistic Regression
+remains the better-performing model.
+
+================================================================================
+MODULE 8 : EXTREME GRADIENT BOOSTING (XGBOOST)
+================================================================================
+
+Status : Completed
+
+Objective
+---------
+Implement the XGBoost classifier for Blood-Brain Barrier Permeability prediction
+and compare its performance with previously implemented classical machine
+learning models.
+
+Concepts Learned
+----------------
+• Gradient Boosting
+• Sequential Tree Learning
+• Learning Rate
+• Ensemble Learning
+• Feature Importance
+
+Model Configuration
+-------------------
+Algorithm : XGBoost Classifier
+
+Parameters:
+- n_estimators = 100
+- learning_rate = 0.1
+- max_depth = 6
+- random_state = 42
+- eval_metric = logloss
+
+Performance
+-----------
+Accuracy : 0.8995
+
+ROC-AUC Score : 0.9414
+
+Confusion Matrix
+----------------
+[[60 36]
+ [ 5 307]]
+
+Observations
+------------
+• XGBoost achieved the highest ROC-AUC score among all classical models.
+• It reduced false positives compared to Random Forest while maintaining the
+  same number of false negatives.
+• The model demonstrated strong discrimination between BBB-permeable and
+  non-permeable molecules.
+
+Conclusion
+----------
+XGBoost produced the strongest overall probability-based performance and serves
+as an excellent classical benchmark for future comparison with quantum machine
+learning models.
+
+================================================================================
+MODULE 9 : HYPERPARAMETER OPTIMIZATION (GRID SEARCH)
+================================================================================
+
+Status : Completed
+
+Objective
+---------
+Optimize the XGBoost classifier using GridSearchCV and compare its performance
+with the manually configured baseline model.
+
+Concepts Learned
+----------------
+• Hyperparameter Optimization
+• Grid Search
+• Cross Validation
+• Model Selection
+• Parameter Grid
+
+Parameter Grid
+--------------
+n_estimators : [50, 100, 150]
+max_depth : [3, 5, 7]
+learning_rate : [0.01, 0.1, 0.2]
+
+Best Parameters
+---------------
+learning_rate = 0.1
+max_depth = 5
+n_estimators = 150
+
+Best Cross Validation ROC-AUC
+-----------------------------
+0.8980
+
+Test Performance
+----------------
+Accuracy : 0.8946
+ROC-AUC : 0.9370
+
+Confusion Matrix
+----------------
+[[57 39]
+ [ 4 308]]
+
+Observations
+------------
+• Grid Search successfully identified the best parameter combination within the
+  defined search space.
+• The tuned model slightly reduced false negatives.
+• The manually selected baseline XGBoost achieved slightly higher test accuracy
+  and ROC-AUC.
+
+Conclusion
+----------
+Hyperparameter optimization did not improve the overall test performance beyond
+the baseline XGBoost model. The original configuration remains the preferred
+classical model for this project.
+
+================================================================================
+MODULE 10.1 : INTRODUCTION TO QUANTUM MACHINE LEARNING
+================================================================================
+
+Status : Completed
+
+Objective
+---------
+Understand the motivation behind Quantum Machine Learning (QML) and its
+potential applications in drug discovery.
+
+Concepts Learned
+----------------
+• Classical Computing
+• Quantum Computing
+• Qubits
+• Quantum Machine Learning
+• Drug Discovery Applications
+
+Key Points
+----------
+• Classical computers use bits that represent either 0 or 1.
+• Quantum computers use qubits, which follow the principles of quantum mechanics.
+• Quantum Machine Learning combines quantum computing techniques with machine
+  learning algorithms.
+• Quantum models are an active area of research and are especially promising
+  for applications such as molecular simulation, optimization, and quantum
+  chemistry.
+
+Project Direction
+-----------------
+Current Pipeline:
+Molecule → Morgan Fingerprint → Classical ML Model
+
+Future Pipeline:
+Molecule → Morgan Fingerprint → Quantum Encoding → Quantum Circuit →
+Quantum Machine Learning Model
+
+Conclusion
+----------
+This module established the theoretical foundation required before implementing
+quantum machine learning models using Qiskit.
+
+================================================================================
+MODULE 10.2 : CLASSICAL BITS VS QUBITS
+================================================================================
+
+Status : Completed
+
+Objective
+---------
+Understand the difference between classical bits and quantum bits (qubits) and
+learn the mathematical representation of a qubit.
+
+Concepts Learned
+----------------
+• Classical Bit
+• Qubit
+• Quantum State
+• Probability Amplitudes
+• Measurement
+• Computational Basis States
+
+Key Points
+----------
+• Classical bits store either 0 or 1.
+• A qubit is represented as a linear combination of the basis states |0⟩ and |1⟩.
+• The coefficients (α and β) are called probability amplitudes.
+• The amplitudes satisfy the normalization condition:
+  |α|² + |β|² = 1.
+• Measuring a qubit produces either 0 or 1 with probabilities determined by
+  the squared magnitudes of the amplitudes.
+
+Conclusion
+----------
+Understanding qubits is essential before learning quantum gates, quantum
+circuits, and quantum machine learning algorithms.
+
+================================================================================
+MODULE 10.3 : QUANTUM SUPERPOSITION
+================================================================================
+
+Status : In Progress
+
+Objective
+---------
+Understand quantum superposition and learn how to create a superposition using
+the Hadamard gate.
+
+Concepts Learned
+----------------
+• Quantum Superposition
+• Hadamard Gate
+• Quantum Measurement
+• Probability Amplitudes
+
+Key Points
+----------
+• Superposition allows a qubit to exist as a combination of computational basis
+  states.
+• An equal superposition of |0⟩ and |1⟩ gives equal measurement probabilities.
+• Measurement produces a single classical result: either 0 or 1.
+• The Hadamard gate can transform |0⟩ into an equal superposition of |0⟩ and |1⟩.
+• A quantum circuit can contain both quantum and classical registers.
+
+Implementation
+--------------
+A one-qubit Qiskit circuit was created using a Hadamard gate followed by a
+measurement operation.
+
+Next Step
+---------
+Run the circuit repeatedly and observe the approximate 50/50 distribution of
+measurement outcomes.
+
+MODULE 10.4 : QUANTUM ENTANGLEMENT
+
+Status : In Progress
+
+Objective:
+Understand quantum entanglement and learn how two qubits can be connected through a quantum circuit.
+
+Concepts:
+• Entanglement
+• Controlled-NOT (CNOT) gate
+• Control qubit
+• Target qubit
+• Correlated measurement outcomes
+
+Key Points:
+• Entanglement is a quantum relationship between two or more qubits.
+• The state of an entangled system cannot generally be described as independent states of each qubit.
+• A Hadamard gate can first create superposition.
+• A CNOT gate can then create entanglement between two qubits.
+• In the circuit used in this module, the resulting state is approximately:
+  (|00> + |11>) / sqrt(2)
+• When measured many times, the expected results are approximately:
+  00 → 50%
+  11 → 50%
+• Results 01 and 10 are not expected for this ideal circuit.
+• Entanglement is an important building block of quantum computing and quantum machine learning.
+• Entanglement alone does not guarantee quantum advantage.
+
+Implementation:
+Created a two-qubit Qiskit circuit using:
+1. Hadamard gate on qubit 0
+2. CNOT gate between qubit 0 and qubit 1
+3. Measurement of both qubits
+4. AerSimulator with 1000 shots
+
+Expected Observation:
+Approximately equal counts of 00 and 11.
+
+Project Relevance:
+Entanglement will later be used as part of quantum circuits for processing encoded molecular features in the Quantum Drug Discovery project.
+
+Next Step:
+Understand quantum gates and how different gates manipulate qubits.
+
+MODULE 10.5 : QUANTUM GATES
+
+Status : In Progress
+
+Objective:
+Understand the basic quantum gates used to manipulate qubits.
+
+Key Gates:
+
+1. X Gate:
+• Also called the quantum NOT gate.
+• Flips the qubit:
+  |0> → |1>
+  |1> → |0>
+• Simple meaning: bit flip.
+
+2. Y Gate:
+• Performs a bit flip together with a phase change.
+• |0> → i|1>
+• |1> → -i|0>
+
+3. Z Gate:
+• Does not change the computational value of the qubit.
+• |0> → |0>
+• |1> → -|1>
+• It changes the phase of |1>.
+
+4. Hadamard (H) Gate:
+• Creates superposition.
+• For an initial |0> state:
+  |0> → (|0> + |1>)/sqrt(2)
+• Measurement gives approximately 50% 0 and 50% 1.
+
+5. S Gate:
+• Applies a 90-degree phase rotation to |1>.
+• |0> remains unchanged.
+
+6. T Gate:
+• Applies a 45-degree phase rotation to |1>.
+• |0> remains unchanged.
+
+7. CNOT Gate:
+• A two-qubit controlled operation.
+• First qubit is the control.
+• Second qubit is the target.
+• If control = 1, the target qubit is flipped.
+• If control = 0, the target remains unchanged.
+
+Easy Summary:
+X → Flip
+Y → Flip + phase change
+Z → Phase flip
+H → Superposition
+S → 90-degree phase rotation
+T → 45-degree phase rotation
+CNOT → Controlled flip
+
+Implementation:
+Created quantum_gates.py using Qiskit.
+The circuit demonstrates X, H and CNOT gates.
+
+Project Relevance:
+Quantum gates are the basic operations used to construct quantum circuits.
+Later, quantum gates will be used to manipulate encoded molecular features in the Quantum Drug Discovery project.
+
+Next Step:
+Understand complete quantum circuits and how multiple gates are combined to process quantum information.
+
+MODULE 10.6 : QUANTUM CIRCUITS
+
+Status : In Progress
+
+Objective:
+Understand how multiple quantum gates are combined to form a complete quantum circuit.
+
+Key Concepts:
+
+• A quantum circuit is a sequence of quantum operations applied to qubits.
+• Quantum circuits contain quantum registers and may contain classical registers.
+• Quantum gates manipulate the state of qubits.
+• Measurement converts quantum information into classical measurement results.
+• Multiple simple gates can be combined to perform more complex quantum operations.
+• A circuit can be executed many times using multiple shots to estimate measurement probabilities.
+
+Circuit Structure:
+
+Initial Qubit State
+        ↓
+Quantum Gates
+        ↓
+Measurement
+        ↓
+Classical Result
+
+Implementation:
+Created complete_circuit.py using Qiskit and AerSimulator.
+
+Circuit Operations:
+1. Hadamard gate on qubit 0
+2. CNOT gate between qubit 0 and qubit 1
+3. X gate on qubit 1
+4. Measurement of both qubits
+5. Circuit executed for 1000 shots
+
+Expected Result:
+The circuit should produce approximately:
+01 → 50%
+10 → 50%
+
+The exact counts vary because quantum measurement is probabilistic.
+
+Project Relevance:
+Quantum circuits will later be used to manipulate quantum-encoded molecular features in the Quantum Drug Discovery project.
+
+Important Note:
+A quantum circuit or quantum computation does not automatically provide better performance than a classical model. Quantum advantage must be demonstrated experimentally for a particular problem.
+
+Next Step:
+Install/verify the required Qiskit components and build the first standalone quantum circuit for the project.
+
+MODULE 10.7 : QISKIT ENVIRONMENT SETUP
+
+Status : Completed
+
+Objective:
+Verify the Qiskit environment required for quantum circuit development.
+
+Key Points:
+• Qiskit is a Python framework for quantum computing.
+• Qiskit allows quantum circuits to be created and executed.
+• Qiskit Aer provides local quantum simulation.
+• The project initially uses a local simulator instead of a physical quantum computer.
+
+Verified Components:
+• Qiskit
+• Qiskit Aer
+• Python quantum circuit execution
+
+The previous quantum experiments successfully executed using AerSimulator.
+
+Project Relevance:
+Qiskit will be used to develop and test the quantum machine learning components of the Quantum Drug Discovery project.
+
+
+MODULE 11.2 : CLASS IMBALANCE HANDLING IN QSVC
+
+Status : In Progress
+
+Objective:
+Improve minority-class detection in the Quantum Support Vector Classifier.
+
+Problem Identified:
+The initial QSVC baseline showed a strong preference
+for class 1 and poor detection of class 0.
+
+Baseline Results:
+Accuracy: 0.7700
+ROC-AUC: 0.7275
+
+Confusion Matrix:
+[[2, 22],
+ [1, 75]]
+
+Class 0 Recall: 0.08
+Class 1 Recall: 0.99
+
+Method:
+Applied balanced class weights using:
+
+class_weight="balanced"
+
+The classifier assigns greater importance to the
+minority class during training.
+
+Experimental Configuration:
+Training samples: 120
+Testing samples: 100
+Quantum features: 4
+Feature map: ZZ Feature Map
+Repetitions: 1
+Entanglement: Linear
+Quantum kernel: Fidelity Quantum Kernel
+
+Evaluation Metrics:
+Accuracy
+Balanced Accuracy
+ROC-AUC
+Confusion Matrix
+Precision
+Recall
+F1-score
+
+Results:
+To be updated after experiment execution.
+
+Observation:
+The balanced QSVC experiment will be compared
+with the original QSVC baseline using the same
+training and testing subsets.
+
+Next Step:
+Evaluate the balanced QSVC and investigate
+improvements in quantum feature representation.
+
+
+MODULE 11.2 : CLASS IMBALANCE HANDLING IN QSVC
+
+Status : Completed
+
+Objective:
+Improve minority-class detection in the Quantum Support
+Vector Classifier using balanced class weights.
+
+Problem Identified:
+The initial QSVC baseline strongly favored class 1
+and showed poor detection of class 0.
+
+Dataset:
+Training samples: 120
+Testing samples: 100
+
+Training Class Distribution:
+Class 0: 28
+Class 1: 92
+
+Method:
+Applied balanced class weights using:
+
+class_weight="balanced"
+
+Experimental Configuration:
+Quantum features: 4
+Feature map: ZZ Feature Map
+Repetitions: 1
+Entanglement: Linear
+Quantum kernel: Fidelity Quantum Kernel
+
+Results:
+
+Accuracy: 0.7600
+Balanced Accuracy: 0.6140
+ROC-AUC: 0.7253
+
+Confusion Matrix:
+[[8, 16],
+ [8, 68]]
+
+Class 0:
+Precision: 0.50
+Recall: 0.33
+F1-score: 0.40
+Support: 24
+
+Class 1:
+Precision: 0.81
+Recall: 0.89
+F1-score: 0.85
+Support: 76
+
+Comparison with Original QSVC:
+
+Original Accuracy: 0.7700
+Balanced QSVC Accuracy: 0.7600
+
+Original Class 0 Recall: 0.08
+Balanced QSVC Class 0 Recall: 0.33
+
+Original ROC-AUC: 0.7275
+Balanced QSVC ROC-AUC: 0.7253
+
+Observations:
+• Balanced class weights improved class 0 recall
+  from approximately 8% to 33%.
+• Class 0 F1-score improved from 0.15 to 0.40.
+• Class 1 recall decreased from 99% to 89%.
+• Overall accuracy decreased slightly.
+• ROC-AUC remained almost unchanged.
+• Balanced accuracy improved from approximately
+  0.535 to 0.614.
+
+Conclusion:
+Balanced class weights improved minority-class
+recognition in QSVC, although the model still has
+difficulty identifying class 0.
+
+The experiment demonstrates a trade-off between
+overall accuracy and minority-class detection.
+
+Next Step:
+Investigate improved quantum feature representations
+and quantum feature-map configurations.
+
+
+MODULE 11.3 : QUANTUM FEATURE MAP OPTIMIZATION
+
+Status : In Progress
+
+Objective:
+Investigate how different quantum feature maps affect
+QSVC classification performance on the BBBP dataset.
+
+Background:
+The previous QSVC experiments used a ZZ Feature Map
+with four features and one repetition.
+
+This experiment investigates whether changing the
+feature-map structure improves classification.
+
+Dataset:
+BBBP molecular dataset
+
+Input Representation:
+1024-bit Morgan fingerprints
+
+Dimensionality Reduction:
+PCA from 1024 to 4 features
+
+Experimental Configuration:
+Training samples: 120
+Testing samples: 100
+Quantum features: 4
+Classifier: QSVC
+Class weights: Balanced
+Quantum kernel: Fidelity Quantum Kernel
+
+Experiments:
+
+1. Z Feature Map
+   Feature dimension: 4
+   Repetitions: 1
+   Entangling interactions: None
+
+2. ZZ Feature Map
+   Feature dimension: 4
+   Repetitions: 1
+   Entanglement: Linear
+
+3. ZZ Feature Map with Increased Depth
+   Feature dimension: 4
+   Repetitions: 2
+   Entanglement: Linear
+
+Evaluation Metrics:
+• Accuracy
+• Balanced Accuracy
+• ROC-AUC
+• Precision
+• Recall
+• F1-score
+• Confusion Matrix
+
+Results:
+To be updated after execution.
+
+Comparison File:
+results/comparisons/feature_map_comparison.csv
+
+Observations:
+To be updated after comparing the three experiments.
+
+Conclusion:
+To be updated after evaluation.
+
+Next Step:
+Select a suitable quantum feature-map configuration
+and investigate further QSVC improvements.
+
+
+MODULE 11.3 : QUANTUM FEATURE MAP OPTIMIZATION
+
+Status : Completed
+
+Objective:
+Investigate the effect of different quantum feature maps
+on QSVC performance for BBBP classification.
+
+Dataset:
+BBBP molecular dataset
+
+Input Representation:
+Morgan fingerprints (1024 features)
+
+Dimensionality Reduction:
+PCA (1024 to 4 features)
+
+Experimental Configuration:
+Training samples: 120
+Testing samples: 100
+Quantum features: 4
+Classifier: QSVC
+Class weights: Balanced
+Quantum kernel: Fidelity Quantum Kernel
+
+Experiments:
+
+1. Z Feature Map
+   Feature dimension: 4
+   Repetitions: 1
+   Accuracy: 0.7700
+   Balanced Accuracy: 0.5779
+   ROC-AUC: 0.7708
+
+2. ZZ Feature Map
+   Feature dimension: 4
+   Repetitions: 1
+   Entanglement: Linear
+   Accuracy: 0.7600
+   Balanced Accuracy: 0.6140
+   ROC-AUC: 0.7253
+
+3. ZZ Feature Map with 2 Repetitions
+   Feature dimension: 4
+   Repetitions: 2
+   Entanglement: Linear
+   Accuracy: 0.7200
+   Balanced Accuracy: 0.6447
+   ROC-AUC: 0.7160
+
+Observations:
+• Z Feature Map achieved the highest accuracy of 77%.
+• Z Feature Map achieved the highest ROC-AUC of 0.7708.
+• ZZ Feature Map with 2 repetitions achieved the
+  highest balanced accuracy of 0.6447.
+• Increasing circuit repetitions improved balanced
+  accuracy but reduced overall accuracy and ROC-AUC.
+• Greater circuit depth did not improve every metric.
+
+Conclusion:
+Different quantum feature maps produce different
+classification results.
+
+The Z Feature Map performed better in terms of
+accuracy and ROC-AUC, whereas the deeper ZZ Feature
+Map performed better in terms of balanced accuracy.
+
+The ZZ Feature Map with 2 repetitions is retained
+as a candidate for further minority-class evaluation.
+The Z Feature Map is also retained for comparison.
+
+Comparison File:
+results/comparisons/feature_map_comparison.csv
+
+Next Step:
+Implement a Variational Quantum Classifier (VQC)
+and investigate trainable quantum circuits.
+
+
+MODULE 11.4 : VARIATIONAL QUANTUM CLASSIFIER (VQC)
+
+Status : In Progress
+
+Objective:
+Implement a trainable quantum machine learning
+classifier for BBBP molecular classification.
+
+Dataset:
+BBBP molecular dataset
+
+Input Representation:
+Morgan fingerprints (1024 features)
+
+Dimensionality Reduction:
+PCA from 1024 to 4 features
+
+Experimental Configuration:
+Training samples: 120
+Testing samples: 100
+Quantum features: 4
+
+Quantum Model:
+Variational Quantum Classifier (VQC)
+
+Feature Map:
+Z Feature Map
+
+Feature Map Repetitions:
+1
+
+Trainable Ansatz:
+Real Amplitudes
+
+Ansatz Repetitions:
+1
+
+Number of Qubits:
+4
+
+Loss Function:
+Cross Entropy
+
+Classical Optimizer:
+COBYLA
+
+Maximum Optimizer Iterations:
+30
+
+Initial Parameters:
+Random values generated using seed 42
+
+Training:
+The VQC optimizes trainable quantum circuit
+parameters using the training dataset.
+
+Evaluation Metrics:
+Accuracy
+Balanced Accuracy
+ROC-AUC
+Confusion Matrix
+Precision
+Recall
+F1-score
+
+Results:
+To be updated after execution.
+
+Saved Files:
+results/comparisons/vqc_predictions.npy
+results/comparisons/vqc_probabilities.npy
+results/comparisons/vqc_weights.npy
+results/comparisons/vqc_loss_history.npy
+results/comparisons/vqc_metrics.npz
+
+Observations:
+To be updated after evaluation.
+
+Conclusion:
+To be updated after evaluation.
+
+Next Step:
+Compare VQC with QSVC and classical machine
+learning models.
+
+## MODULE 11.4: VARIATIONAL QUANTUM CLASSIFIER (VQC)
+
+**Status:** Completed
+
+### Objective
+Implement a trainable quantum machine learning classifier for BBBP molecular classification.
+
+### Dataset
+BBBP (Blood-Brain Barrier Penetration)
+
+### Input Representation
+- Morgan fingerprints: 1024 features
+- PCA dimensionality reduction: 1024 to 4 features
+- Number of qubits: 4
+
+### Experimental Configuration
+- Training samples: 120
+- Testing samples: 100
+- Feature map: Z Feature Map
+- Feature map repetitions: 1
+- Ansatz: Real Amplitudes
+- Ansatz repetitions: 1
+- Loss function: Cross Entropy
+- Optimizer: COBYLA
+- Maximum optimizer iterations: 30
+- Random seed: 42
+
+### Evaluation Results
+
+| Metric | Result |
+|---|---:|
+| Accuracy | 0.6500 |
+| Balanced Accuracy | 0.4419 |
+| ROC-AUC | 0.6754 |
+
+### Confusion Matrix
+
+[[1, 23],
+ [12, 64]]
+
+### Classification Results
+
+**Class 0:**
+- Precision: 0.08
+- Recall: 0.04
+- F1-score: 0.05
+- Support: 24
+
+**Class 1:**
+- Precision: 0.74
+- Recall: 0.84
+- F1-score: 0.79
+- Support: 76
+
+### Observations
+1. The VQC achieved 65% classification accuracy.
+2. The model correctly identified only 1 out of 24 class-0 samples.
+3. The model showed a strong bias towards predicting class 1.
+4. The balanced accuracy of 0.4419 indicates poor performance across both classes.
+5. The ROC-AUC of 0.6754 indicates limited ability to distinguish between the two classes.
+6. Class imbalance may have contributed to the poor minority-class performance.
+7. The current VQC configuration performed worse than the tested QSVC configurations.
+
+### Conclusion
+A Variational Quantum Classifier was successfully implemented using a Z Feature Map and Real Amplitudes ansatz.
+
+The experiment demonstrates how trainable quantum circuits can be used for molecular classification. However, the current configuration struggles with minority-class prediction.
+
+Further experiments involving class-imbalance handling, circuit configurations, and optimizer tuning are required before drawing conclusions about VQC performance.
+
+### Saved Files
+- results/comparisons/vqc_predictions.npy
+- results/comparisons/vqc_probabilities.npy
+- results/comparisons/vqc_weights.npy
+- results/comparisons/vqc_loss_history.npy
+- results/comparisons/vqc_metrics.npz
+
+### Next Step
+Improve VQC performance through class-imbalance handling and hyperparameter experimentation.
+
+
+
+
